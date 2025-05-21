@@ -1,5 +1,6 @@
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import FileResponse
+from fastapi.middleware.cors import CORSMiddleware
 from PyPDF2 import PdfReader, PdfWriter
 import os
 import img2pdf
@@ -7,6 +8,20 @@ from docx2pdf import convert
 import tempfile
 
 app = FastAPI()
+
+# Konfigurasi CORS
+origins = [
+    "http://localhost:3000",  # Untuk pengembangan lokal
+    "http://192.168.100.2:3000",  # IP frontend Anda
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # Daftar origin yang diizinkan
+    allow_credentials=True,
+    allow_methods=["*"],  # Metode HTTP yang diizinkan (GET, POST, dll.)
+    allow_headers=["*"],  # Header yang diizinkan
+)
 
 @app.post("/convert-to-pdf")
 async def convert_to_pdf(file: UploadFile = File(...)):
@@ -30,8 +45,8 @@ async def convert_to_pdf(file: UploadFile = File(...)):
             return {"error": "Format file tidak didukung."}
 
         # Kembalikan file PDF sebagai respons
-        return FileResponse(output_path, media_type="application/pdf", filename="output.pdf")
-
+        # return FileResponse(output_path, media_type="application/pdf", filename="output.pdf")
+        return {"url": f"http://localhost:8000/download/{os.path.basename(output_path)}"}
     except Exception as e:
         return {"error": f"Gagal mengonversi file: {str(e)}"}
 
@@ -39,7 +54,14 @@ async def convert_to_pdf(file: UploadFile = File(...)):
         # Hapus file sementara setelah selesai
         if os.path.exists(file_path):
             os.remove(file_path)
+        
         # Jangan hapus output_path di sini, biarkan FileResponse yang mengelola file tersebut
+@app.get("/download/{filename}")
+async def download_file(filename: str):
+    file_path = os.path.join(tempfile.gettempdir(), filename)
+    if os.path.exists(file_path):
+        return FileResponse(file_path, media_type="application/pdf", filename=filename)
+    return {"error": "File not found"}
 
 @app.post("/compress-pdf")
 async def compress_pdf(file: UploadFile = File(...)):
@@ -74,7 +96,6 @@ async def compress_pdf(file: UploadFile = File(...)):
         # Hapus file sementara setelah selesai
         if os.path.exists(file_path):
             os.remove(file_path)
-        # Jangan hapus output_path di sini, biarkan FileResponse yang mengelola file tersebut
 
 @app.post("/merge-pdfs")
 async def merge_pdfs(files: list[UploadFile] = File(...)):
