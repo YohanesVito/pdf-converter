@@ -7,8 +7,6 @@ services:
       - ./api:/app
     environment:
       - PYTHONUNBUFFERED=1
-    depends_on:
-      - bot
 
   web:
     build: ./web
