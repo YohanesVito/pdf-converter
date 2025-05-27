@@ -1,4 +1,4 @@
-FROM node:20-slim
+FROM node:21-alpine3.19
 
 WORKDIR /app
 
@@ -6,16 +6,16 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm ci
+
 RUN npm install -g next
-# Pastikan next.js tersedia di PATH
-ENV PATH="./node_modules/.bin:$PATH"
 
-# Salin seluruh kode aplikasi
-COPY . .
+COPY src ./src
+COPY public ./public
+COPY next.config.js .
+COPY jsconfig.json .
+COPY postcss.config.mjs .
 
-# Ekspose port untuk aplikasi
-EXPOSE 3000
+RUN npm run build
 
-# Jalankan aplikasi dalam mode development
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "start"]
