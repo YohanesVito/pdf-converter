@@ -1,0 +1,28 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run sshpass commands and move to project dir
+        uses: matheusvanzan/sshpass-action@v2
+        with:
+          host: ${{ secrets.VPS_SERVER_ADDRESS }}
+          user: ${{ secrets.VPS_USERNAME }}
+          pass: ${{ secrets.VPS_PASSWORD }}
+          run: |
+            cd ~/pdf-converter/
+            git pull
+            docker compose down 
+            docker compose build --no-cache
+            docker compose up -d
+            docker image prune -f
+            docker system prune -f

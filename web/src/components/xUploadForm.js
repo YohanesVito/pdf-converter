@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Button, TextField, Typography, Box } from "@mui/material";
-import ResultDisplay from "./ResultDisplay";
+import ResultDisplay from "./xResultDisplay";
 import { convertToPdf, compressPdf, mergePdfs } from "../lib/api"; // Import fungsi API
 
 const UploadForm = () => {

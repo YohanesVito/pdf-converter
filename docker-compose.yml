@@ -1,21 +1,22 @@
-
 services:
-  bot:
-    build: ./bot
-    environment:
-      - BOT_TOKEN=${BOT_TOKEN}  # Menggunakan variabel dari .env
-      - API_URL=${API_URL}
-    depends_on:
-      - api
-
   api:
     build: ./api
     ports:
       - "8000:8000"
+    volumes:
+      - ./api:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - bot
 
   web:
     build: ./web
     ports:
       - "3000:3000"
+    volumes:
+      - ./web:/app
+    environment:
+      - NEXT_PUBLIC_API_URL=http://api:8000
     depends_on:
       - api

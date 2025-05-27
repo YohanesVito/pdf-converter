@@ -1,4 +1,5 @@
-// components/HeroSection.jsx
+import Link from "next/link";
+
 const HeroSection = () => {
   return (
     <div
@@ -16,11 +17,13 @@ const HeroSection = () => {
           Effortlessly manage your PDFs with our comprehensive suite of tools. Compress, convert, merge, and more, all in one place.
         </h2>
       </div>
-      <button
-        className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 @[480px]:h-12 @[480px]:px-5 bg-[#1978e5] text-slate-50 text-sm font-bold leading-normal tracking-[0.015em] @[480px]:text-base @[480px]:font-bold @[480px]:leading-normal @[480px]:tracking-[0.015em]"
-      >
-        <span className="truncate">Explore Tools</span>
-      </button>
+      <Link href="/all-tools">
+        <button
+          className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 @[480px]:h-12 @[480px]:px-5 bg-[#1978e5] text-slate-50 text-sm font-bold leading-normal tracking-[0.015em] @[480px]:text-base @[480px]:font-bold @[480px]:leading-normal @[480px]:tracking-[0.015em]"
+        >
+          <span className="truncate">Explore Tools</span>
+        </button>
+      </Link>
     </div>
   );
 };

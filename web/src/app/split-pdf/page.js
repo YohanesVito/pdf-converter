@@ -2,7 +2,7 @@ import Header from "@/components/layout/Header";
 import MergePDF from "@/components/MergePDF";
 
 export const metadata = {
-  title: "Merge PDF - PDF Tools",
+  title: "Merge PDF",
 };
 
 export default function MergePDFPage() {

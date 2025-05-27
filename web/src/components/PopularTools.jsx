@@ -1,39 +1,3 @@
-// // components/PopularTools.jsx
-// import Link from "next/link";
-
-// const PopularTools = () => {
-//   return (
-//     <div>
-//       <h2 className="text-[#0e141b] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">
-//         Popular Tools
-//       </h2>
-//       <div className="grid grid-cols-[repeat(auto-fit,minmax(158px,1fr))] gap-3 p-4">
-        
-
-//         //merge pdf
-//         <Link href="/merge-pdf" className="flex flex-1 gap-3 rounded-lg border border-[#d0dbe7] bg-slate-50 p-4 flex-col">
-//           <div className="text-[#0e141b]" data-icon="File" data-size="24px" data-weight="regular">
-//             <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
-//               <path
-//                 d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Z"
-//               ></path>
-//             </svg>
-//           </div>
-//           <div className="flex flex-col gap-1">
-//             <h2 className="text-[#0e141b] text-base font-bold leading-tight">Merge PDF</h2>
-//             <p className="text-[#4e7097] text-sm font-normal leading-normal">Reduce file size without losing quality</p>
-//           </div>
-//         </Link>
-//         {/* Tambahkan alat populer lainnya di sini */}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default PopularTools;
-
-
-
 // components/PopularTools.jsx
 import Link from "next/link";
 
@@ -47,15 +11,15 @@ const PopularTools = () => {
     },
     {
       icon: "FileImage",
-      title: "PDF to Image",
-      description: "Convert PDF pages to images",
-      href: "/pdf-to-image",
+      title: "Image to PDF",
+      description: "Convert images to PDF pages or PDF to images",
+      href: "/image-to-pdf",
     },
     {
       icon: "FilePdf",
-      title: "PDF to Word",
-      description: "Convert PDF to editable Word documents",
-      href: "/pdf-to-word",
+      title: "Word to PDF",
+      description: "Convert word documents to PDF or PDF to Word",
+      href: "/word-to-pdf",
     },
     {
       icon: "File",
@@ -63,18 +27,18 @@ const PopularTools = () => {
       description: "Combine multiple PDFs into one",
       href: "/merge-pdf",
     },
-    {
-      icon: "File",
-      title: "Split PDF",
-      description: "Extract specific pages from a PDF",
-      href: "/split-pdf",
-    },
-    {
-      icon: "File",
-      title: "Edit PDF",
-      description: "Add or edit text, images, and more",
-      href: "/edit-pdf",
-    },
+    // {
+    //   icon: "File",
+    //   title: "Split PDF",
+    //   description: "Extract specific pages from a PDF",
+    //   href: "/split-pdf",
+    // },
+    // {
+    //   icon: "File",
+    //   title: "Edit PDF",
+    //   description: "Add or edit text, images, and more",
+    //   href: "/edit-pdf",
+    // },
   ];
 
   return (
