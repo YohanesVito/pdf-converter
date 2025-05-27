@@ -7,7 +7,7 @@ COPY package*.json ./
 
 # Install dependencies
 RUN npm install
-
+RUN npm install -g next
 # Pastikan next.js tersedia di PATH
 ENV PATH="./node_modules/.bin:$PATH"
 
