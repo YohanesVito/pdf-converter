@@ -1,3 +1,4 @@
+import uvicorn
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -321,3 +322,7 @@ async def delete_temp_files(file_urls: FileUrls):
         return {"message": "Temporary files and folders deleted successfully"}
     except Exception as e:
         return {"error": f"Failed to delete temporary files or folders: {str(e)}"}
+    
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8001)
