@@ -18,4 +18,4 @@ COPY . .
 RUN npm run build
 
 # Jalankan server produksi
-CMD ["npm", "run", "start"]
+CMD ["npm", "start"]
