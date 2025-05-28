@@ -65,6 +65,7 @@ const ConvertImagePDF = () => {
       }
     } catch (error) {
       console.error("Error during conversion:", error);
+      console.log("Error during conversion:", error);
       alert("Failed to convert file. Please try again.");
     } finally {
       setIsLoading(false); // Set loading ke false

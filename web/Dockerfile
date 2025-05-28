@@ -12,7 +12,7 @@ RUN npm install
 COPY . .
 
 # Build proyek Next.js
-# RUN npm run build
+RUN npm run build
 
 # Jalankan server produksi
-CMD ["npm", "run", "dev"]
+CMD ["npm", "start"]
