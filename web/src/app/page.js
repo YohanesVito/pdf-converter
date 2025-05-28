@@ -6,6 +6,10 @@ import PopularTools from '@/components/PopularTools';
 import MoreTools from '@/components/MoreTools';
 import Footer from '@/components/layout/Footer';
 
+export const metadata = {
+  title: "PDF Tools",
+};
+
 const HomePage = () => {
 return (
     <div className="relative flex size-full min-h-screen flex-col bg-slate-50 group/design-root overflow-x-hidden font-['Work Sans','Noto Sans',sans-serif]">
