@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.tugra-dev.my.id";
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.tools.tugra-dev.my.id";
 
 const apiClient = axios.create({
   baseURL: API_URL, // Gunakan variabel lingkungan untuk base URL
