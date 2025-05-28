@@ -18,7 +18,8 @@ app = FastAPI()
 
 # Konfigurasi CORS
 origins = [
-    "http://localhost:3000",  # Untuk pengembangan lokal
+    "http://localhost:3000",
+      "https://tools.tugra-dev.my.id",  # Untuk pengembangan lokal
     "http://192.168.100.2:3000",  # IP frontend Anda
 ]
 
