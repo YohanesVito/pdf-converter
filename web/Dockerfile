@@ -1,4 +1,4 @@
-FROM node:21
+FROM node:22-alpine
 
 WORKDIR /app
 
@@ -6,7 +6,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci
+RUN npm install
 
 # Install next secara global (opsional, biasanya tidak perlu kalau di package.json sudah ada)
 RUN npm install -g next
