@@ -9,7 +9,7 @@ COPY package*.json ./
 RUN npm install
 
 # Install next secara global (opsional, biasanya tidak perlu kalau di package.json sudah ada)
-RUN npm install -g next
+# RUN npm install -g next
 
 # Salin semua file proyek ke dalam container
 COPY . .
