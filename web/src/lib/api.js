@@ -1,9 +1,10 @@
 import axios from "axios";
 
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://api:8001";
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.tugra-dev.my.id";
 
 const apiClient = axios.create({
   baseURL: API_URL, // Gunakan variabel lingkungan untuk base URL
+  timeout: 10000,
 });
 
 // Convert Image to PDF
