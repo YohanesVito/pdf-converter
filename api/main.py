@@ -52,7 +52,7 @@ async def convert_to_pdf(file: UploadFile = File(...)):
 
         # Kembalikan file PDF sebagai respons
         # return FileResponse(output_path, media_type="application/pdf", filename="output.pdf")
-        return {"url": f"http://localhost:8000/download/{os.path.basename(output_path)}"}
+        return {"url": f"http://localhost:8001/download/{os.path.basename(output_path)}"}
     except Exception as e:
         return {"error": f"Gagal mengonversi file: {str(e)}"}
 
@@ -78,7 +78,7 @@ async def convert_image_to_pdf(file: UploadFile = File(...)):
             f.write(img2pdf.convert(file_path))
 
         # Kembalikan file PDF sebagai respons
-        return {"url": f"http://localhost:8000/download/{os.path.basename(output_path)}"}
+        return {"url": f"http://localhost:8001/download/{os.path.basename(output_path)}"}
     except Exception as e:
         return {"error": f"Gagal mengonversi gambar ke PDF: {str(e)}"}
     finally:
@@ -124,10 +124,10 @@ async def convert_pdf_to_image(file: UploadFile = File(...)):
 
         # Jika hanya satu halaman, kembalikan URL tunggal
         if len(image_paths) == 1:
-            return {"url": f"http://localhost:8000/download/{os.path.basename(image_paths[0])}"}
+            return {"url": f"http://localhost:8001/download/{os.path.basename(image_paths[0])}"}
 
         # Jika lebih dari satu halaman, kembalikan daftar URL
-        return {"images": [f"http://localhost:8000/download/{os.path.basename(path)}" for path in image_paths]}
+        return {"images": [f"http://localhost:8001/download/{os.path.basename(path)}" for path in image_paths]}
     except Exception as e:
         return {"error": f"Gagal mengonversi PDF ke gambar: {str(e)}"}
     finally:
@@ -150,7 +150,7 @@ async def convert_word_to_pdf(file: UploadFile = File(...)):
         convert(file_path, output_path)
 
         # Kembalikan file PDF sebagai respons
-        return {"url": f"http://localhost:8000/download/{os.path.basename(output_path)}"}
+        return {"url": f"http://localhost:8001/download/{os.path.basename(output_path)}"}
     except Exception as e:
         return {"error": f"Gagal mengonversi Word ke PDF: {str(e)}"}
     finally:
@@ -176,7 +176,7 @@ async def convert_pdf_to_word(file: UploadFile = File(...)):
         cv.close()
 
         # Kembalikan file Word sebagai respons
-        return {"url": f"http://localhost:8000/download/{os.path.basename(output_path)}"}
+        return {"url": f"http://localhost:8001/download/{os.path.basename(output_path)}"}
     except Exception as e:
         return {"error": f"Gagal mengonversi PDF ke Word: {str(e)}"}
     finally:

@@ -2,7 +2,7 @@ services:
   api:
     build: ./api
     ports:
-      - "8000:8000"
+      - "8001:8000"
     volumes:
       - ./api:/app
     environment:
@@ -15,6 +15,6 @@ services:
     volumes:
       - ./web:/app
     environment:
-      - NEXT_PUBLIC_API_URL=http://api:8000
+      - NEXT_PUBLIC_API_URL=http://api:8001
     depends_on:
       - api
