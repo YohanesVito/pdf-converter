@@ -13,13 +13,19 @@ import shutil
 import zipfile
 from pydantic import BaseModel
 from typing import List
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:8001")
 
 app = FastAPI()
 
 # Konfigurasi CORS
 origins = [
     "http://localhost:3000",
-      "https://tools.tugra-dev.my.id",  # Untuk pengembangan lokal
+    "https://tools.tugra-dev.my.id",  # Untuk pengembangan lokal
     "http://192.168.100.2:3000",  # IP frontend Anda
 ]
 
@@ -54,7 +60,7 @@ async def convert_to_pdf(file: UploadFile = File(...)):
 
         # Kembalikan file PDF sebagai respons
         # return FileResponse(output_path, media_type="application/pdf", filename="output.pdf")
-        return {"url": f"https://api.tools.tugra-dev.my.id/download/{os.path.basename(output_path)}"}
+        return {"url": f"{API_BASE_URL}/download/{os.path.basename(output_path)}"}
     except Exception as e:
         return {"error": f"Gagal mengonversi file: {str(e)}"}
 
@@ -80,7 +86,7 @@ async def convert_image_to_pdf(file: UploadFile = File(...)):
             f.write(img2pdf.convert(file_path))
 
         # Kembalikan file PDF sebagai respons
-        return {"url": f"https://api.tools.tugra-dev.my.id/download/{os.path.basename(output_path)}"}
+        return {"url": f"{API_BASE_URL}/download/{os.path.basename(output_path)}"}
     except Exception as e:
         return {"error": f"Gagal mengonversi gambar ke PDF: {str(e)}"}
     finally:
@@ -126,10 +132,10 @@ async def convert_pdf_to_image(file: UploadFile = File(...)):
 
         # Jika hanya satu halaman, kembalikan URL tunggal
         if len(image_paths) == 1:
-            return {"url": f"https://api.tools.tugra-dev.my.id/download/{os.path.basename(image_paths[0])}"}
+            return {"url": f"{API_BASE_URL}/download/{os.path.basename(image_paths[0])}"}
 
         # Jika lebih dari satu halaman, kembalikan daftar URL
-        return {"images": [f"https://api.tools.tugra-dev.my.id/download/{os.path.basename(path)}" for path in image_paths]}
+        return {"images": [f"{API_BASE_URL}/download/{os.path.basename(path)}" for path in image_paths]}
     except Exception as e:
         return {"error": f"Gagal mengonversi PDF ke gambar: {str(e)}"}
     finally:
@@ -152,7 +158,7 @@ async def convert_word_to_pdf(file: UploadFile = File(...)):
         convert(file_path, output_path)
 
         # Kembalikan file PDF sebagai respons
-        return {"url": f"https://api.tools.tugra-dev.my.id/download/{os.path.basename(output_path)}"}
+        return {"url": f"{API_BASE_URL}/download/{os.path.basename(output_path)}"}
     except Exception as e:
         return {"error": f"Gagal mengonversi Word ke PDF: {str(e)}"}
     finally:
@@ -178,7 +184,7 @@ async def convert_pdf_to_word(file: UploadFile = File(...)):
         cv.close()
 
         # Kembalikan file Word sebagai respons
-        return {"url": f"https://api.tools.tugra-dev.my.id/download/{os.path.basename(output_path)}"}
+        return {"url": f"{API_BASE_URL}/download/{os.path.basename(output_path)}"}
     except Exception as e:
         return {"error": f"Gagal mengonversi PDF ke Word: {str(e)}"}
     finally:

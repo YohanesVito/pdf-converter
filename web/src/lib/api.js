@@ -1,6 +1,7 @@
 import axios from "axios";
 
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.tools.tugra-dev.my.id";
+export const API_URL = "http://localhost:8001"; // Ganti dengan URL API Anda
+// export const API_URL = "https://api.tools.tugra-dev.my.id";
 
 const apiClient = axios.create({
   baseURL: API_URL, // Gunakan variabel lingkungan untuk base URL
@@ -93,38 +94,12 @@ export const mergePdfs = async (files) => {
   return response.data;
 };
 
-export const downloadAllFiles = async (fileUrls) => {
+// Delete temporary files
+export const deleteTempFiles = async (fileUrls) => {
   try {
-    // Panggil endpoint untuk membuat file ZIP
-    const response = await fetch(`${API_URL}/create-zip`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ file_urls: fileUrls }),
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to create ZIP file");
-    }
-
-    // Unduh file ZIP
-    const blob = await response.blob();
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "processed_files.zip";
-    link.click();
-
-    // Hapus file sementara setelah unduhan selesai
-    await fetch(`${API_URL}/delete-temp-files`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ file_urls: fileUrls }),
-    });
+    await apiClient.post("/delete-temp-files", { file_urls: fileUrls });
   } catch (error) {
-    console.error("Error downloading all files:", error);
+    console.error("Error deleting temporary files:", error);
     throw error;
   }
 };

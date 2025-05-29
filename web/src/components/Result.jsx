@@ -1,96 +1,108 @@
-import { downloadAllFiles } from "@/lib/api";
+import JSZip from "jszip";
+import { deleteTempFiles } from "@/lib/api";
 
-const Result = ({ result }) => {
-  const handleDownloadAll = async () => {
-    if (Array.isArray(result.fileUrl)) {
-      try {
-        await downloadAllFiles(result.fileUrl); // Panggil fungsi dari api.js
-      } catch (error) {
-        alert("Failed to download all files. Please try again.");
-      }
+const Result = ({ result, tab }) => {
+  const handleDeleteTempFiles = async () => {
+    try {
+      const fileUrls = Array.isArray(result.fileUrl)
+        ? result.fileUrl
+        : [result.fileUrl];
+
+      await deleteTempFiles(fileUrls);
+      console.log("Temporary files deleted successfully.");
+    } catch (error) {
+      console.error("Failed to delete temporary files:", error);
     }
   };
 
-  const handleDownload = () => {
-    if (Array.isArray(result.fileUrl)) {
-      // Unduh semua file satu per satu (fallback jika ZIP tidak digunakan)
-      result.fileUrl.forEach((url, index) => {
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = `processed-file-page-${index + 1}.jpg`;
-        link.click();
-      });
-    } else {
-      // Unduh file tunggal
+  const handleDownloadPdf = () => {
+    const link = document.createElement("a");
+    link.href = result.fileUrl;
+    link.download = "converted-file.pdf";
+    link.click();
+
+    setTimeout(() => {
+      handleDeleteTempFiles();
+    }, 2000); // delay 2 detik
+  };
+
+  const handleDownloadImages = () => {
+    result.fileUrl.forEach((url, index) => {
       const link = document.createElement("a");
-      link.href = result.fileUrl;
-      link.download = "processed-file.pdf";
+      link.href = url;
+      link.download = `page-${index + 1}.jpg`;
       link.click();
-    }
+    });
+
+    setTimeout(() => {
+      handleDeleteTempFiles();
+    }, 2000); // delay 2 detik
+  };
+
+  const handleDownloadZip = async () => {
+    const zip = new JSZip();
+
+    // Tambahkan file ke dalam ZIP
+    result.fileUrl.forEach((url, index) => {
+      zip.file(`page-${index + 1}.jpg`, url.split(",")[1], { base64: true });
+    });
+
+    // Buat ZIP dan trigger download
+    const content = await zip.generateAsync({ type: "blob" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(content);
+    link.download = "converted-images.zip";
+    link.click();
+
+    // Tunggu sedikit sebelum delete (biar browser sempat mulai download)
+    setTimeout(async () => {
+      try {
+        const fileUrls = Array.isArray(result.fileUrl)
+          ? result.fileUrl
+          : [result.fileUrl];
+        await deleteTempFiles(fileUrls);
+        console.log("Temporary files deleted successfully.");
+      } catch (error) {
+        console.error("Failed to delete temporary files:", error);
+      }
+    }, 2000); // delay 2 detik
   };
 
   return (
     <div className="px-40 flex flex-1 justify-center py-5">
       <div className="layout-content-container flex flex-col max-w-[960px] flex-1">
-        {/* Judul */}
-        <h2 className="text-[#0e141b] tracking-light text-[28px] font-bold leading-tight px-4 text-center pb-3 pt-5">
+        <h2 className="text-[#0e141b] text-[28px] font-bold text-center pb-3 pt-5">
           Your file is ready!
         </h2>
-
-        {/* Deskripsi */}
-        <p className="text-[#0e141b] text-base font-normal leading-normal pb-3 pt-1 px-4 text-center">
+        <p className="text-[#0e141b] text-base text-center px-4">
           Click the button below to download your processed file.
         </p>
 
-        {/* Tombol Unduh */}
-        <div className="flex px-4 py-3 justify-center">
-          <button
-            onClick={handleDownloadAll}
-            className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-[#1978e5] text-slate-50 text-base font-bold leading-normal tracking-[0.015em]"
-          >
-            <span className="truncate">Download All Files</span>
-          </button>
-        </div>
+        {tab === "imageToPdf" && (
+          <div className="flex justify-center py-4">
+            <button
+              onClick={handleDownloadPdf}
+              className="h-12 px-5 bg-[#1978e5] text-white font-bold rounded-lg cursor-pointer"
+            >
+              Download PDF
+            </button>
+          </div>
+        )}
 
-        {/* Informasi Ukuran File */}
-        <p className="text-[#4e7097] text-sm font-normal leading-normal pb-3 pt-1 px-4 text-center">
-          File size: {result.fileSize || "Unknown"} MB
-        </p>
-
-        {/* Jika fileUrl adalah array, tampilkan thumbnail */}
-        {Array.isArray(result.fileUrl) && (
-          <div className="mt-6">
-            <h3 className="text-[#0e141b] text-lg font-bold leading-tight px-4 text-center pb-3">
-              Thumbnails:
-            </h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4">
-              {result.fileUrl.map((url, index) => (
-                <div
-                  key={index}
-                  className="flex flex-col items-center border border-gray-300 rounded-lg p-2 shadow-sm"
-                >
-                  <img
-                    src={url}
-                    alt={`Page ${index + 1}`}
-                    className="w-full h-32 object-cover rounded"
-                  />
-                  <p className="text-sm text-[#0e141b] font-medium mt-2">
-                    Page {index + 1}
-                  </p>
-                  <button
-                    onClick={() => {
-                      const link = document.createElement("a");
-                      link.href = url;
-                      link.download = `processed-file-page-${index + 1}.jpg`;
-                      link.click();
-                    }}
-                    className="mt-2 px-4 py-2 bg-blue-500 text-white text-sm rounded"
-                  >
-                    Download
-                  </button>
-                </div>
-              ))}
-            </div>
+        {tab === "pdfToImage" && (
+          <div className="flex flex-col items-center gap-4 py-4">
+            <button
+              onClick={handleDownloadImages}
+              className="h-12 px-5 bg-[#1978e5] text-white font-bold rounded-lg cursor-pointer"
+            >
+              Download Single Files
+            </button>
+            <button
+              onClick={handleDownloadZip}
+              className="h-12 px-5 bg-[#1978e5] text-white font-bold rounded-lg cursor-pointer"
+            >
+              Download as ZIP
+            </button>
           </div>
         )}
       </div>
