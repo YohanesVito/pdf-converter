@@ -21,9 +21,10 @@ const Result = ({ result, tab }) => {
     link.download = "converted-file.pdf";
     link.click();
 
-    setTimeout(() => {
-      handleDeleteTempFiles();
-    }, 2000); // delay 2 detik
+    // setTimeout(() => {
+    //   handleDeleteTempFiles();
+    // }, 2000); // delay 2 detik
+    window.location.href = "/image-to-pdf";
   };
 
   const handleDownloadImages = () => {
@@ -34,9 +35,10 @@ const Result = ({ result, tab }) => {
       link.click();
     });
 
-    setTimeout(() => {
-      handleDeleteTempFiles();
-    }, 2000); // delay 2 detik
+    // setTimeout(() => {
+    //   handleDeleteTempFiles();
+    // }, 2000); // delay 2 detik
+    window.location.href = "/image-to-pdf";
   };
 
   const handleDownloadZip = async () => {
@@ -55,17 +57,18 @@ const Result = ({ result, tab }) => {
     link.click();
 
     // Tunggu sedikit sebelum delete (biar browser sempat mulai download)
-    setTimeout(async () => {
-      try {
-        const fileUrls = Array.isArray(result.fileUrl)
-          ? result.fileUrl
-          : [result.fileUrl];
-        await deleteTempFiles(fileUrls);
-        console.log("Temporary files deleted successfully.");
-      } catch (error) {
-        console.error("Failed to delete temporary files:", error);
-      }
-    }, 2000); // delay 2 detik
+    // setTimeout(async () => {
+    //   try {
+    //     const fileUrls = Array.isArray(result.fileUrl)
+    //       ? result.fileUrl
+    //       : [result.fileUrl];
+    //     await deleteTempFiles(fileUrls);
+    //     console.log("Temporary files deleted successfully.");
+    //   } catch (error) {
+    //     console.error("Failed to delete temporary files:", error);
+    //   }
+    // }, 2000); // delay 2 detik
+    window.location.href = "/image-to-pdf";
   };
 
   return (
