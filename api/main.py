@@ -24,14 +24,14 @@ app = FastAPI()
 
 # Konfigurasi CORS
 origins = [
-    "http://localhost:3000",
-    "https://tools.tugra-dev.my.id",  # Untuk pengembangan lokal
+    "https://tools.tugra-dev.my.id",
+    "http://localhost:3000",      # Untuk pengembangan lokal
     "http://192.168.100.2:3000",  # IP frontend Anda
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,  # Daftar origin yang diizinkan
+    allow_origins=["https://tools.tugra-dev.my.id"],  # Daftar origin yang diizinkan
     allow_credentials=True,
     allow_methods=["*"],  # Metode HTTP yang diizinkan (GET, POST, dll.)
     allow_headers=["*"],  # Header yang diizinkan
