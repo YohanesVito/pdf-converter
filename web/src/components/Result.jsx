@@ -24,7 +24,7 @@ const Result = ({ result, tab }) => {
     // setTimeout(() => {
     //   handleDeleteTempFiles();
     // }, 2000); // delay 2 detik
-    window.location.href = "/image-to-pdf";
+    // window.location.href = "/image-to-pdf";
   };
 
   const handleDownloadImages = () => {
@@ -38,7 +38,7 @@ const Result = ({ result, tab }) => {
     // setTimeout(() => {
     //   handleDeleteTempFiles();
     // }, 2000); // delay 2 detik
-    window.location.href = "/image-to-pdf";
+    // window.location.href = "/image-to-pdf";
   };
 
   const handleDownloadZip = async () => {
@@ -68,7 +68,7 @@ const Result = ({ result, tab }) => {
     //     console.error("Failed to delete temporary files:", error);
     //   }
     // }, 2000); // delay 2 detik
-    window.location.href = "/image-to-pdf";
+    // window.location.href = "/image-to-pdf";
   };
 
   return (
