@@ -23,19 +23,18 @@ API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:8001")
 app = FastAPI()
 
 # Konfigurasi CORS
-origins = [
-    "https://tools.tugra-dev.my.id",
-    "http://localhost:3000",      # Untuk pengembangan lokal
-    "http://192.168.100.2:3000",  # IP frontend Anda
-]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://tools.tugra-dev.my.id"],  # Daftar origin yang diizinkan
+    allow_origins=[
+        "https://tools.tugra-dev.my.id",
+        "http://localhost:3000",
+        "http://192.168.100.2:3000"
+    ],
     allow_credentials=True,
-    allow_methods=["*"],  # Metode HTTP yang diizinkan (GET, POST, dll.)
-    allow_headers=["*"],  # Header yang diizinkan
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
+
 
 @app.post("/convert-to-pdf")
 async def convert_to_pdf(file: UploadFile = File(...)):
