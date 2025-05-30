@@ -8,3 +8,4 @@ pypandoc==1.7.4
 docx2pdf==0.1.8
 pdf2docx==0.5.8
 pdf2image==1.17.0
+dotenv==1.0.0
