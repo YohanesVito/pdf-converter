@@ -91,12 +91,12 @@ const Result = ({ result, tab }) => {
 
         {tab === "pdfToImage" && (
           <div className="flex flex-col items-center gap-4 py-4">
-            <button
+            {/* <button
               onClick={handleDownloadImages}
               className="h-12 px-5 bg-[#1978e5] text-white font-bold rounded-lg cursor-pointer"
             >
               Download Single Files
-            </button>
+            </button> */}
             <button
               onClick={handleDownloadZip}
               className="h-12 px-5 bg-[#1978e5] text-white font-bold rounded-lg cursor-pointer"
