@@ -105,9 +105,9 @@ async def convert_image_to_pdf(file: UploadFile = File(...)):
         return {"url": f"{API_BASE_URL}/download/{output_filename}"}
     except Exception as e:
         return {"error": f"Gagal mengonversi gambar ke PDF: {str(e)}"}
-    finally:
-        if os.path.exists(file_path):
-            os.remove(file_path)
+    # finally:
+    #     if os.path.exists(file_path):
+    #         os.remove(file_path)
 
 # Endpoint: Convert PDF to Image
 @app.post("/convert-pdf-to-image")
@@ -162,11 +162,11 @@ async def convert_pdf_to_image(file: UploadFile = File(...)):
     except Exception as e:
         print(f"Error during PDF to image conversion: {str(e)}")  # Debugging: Error yang terjadi
         return {"error": f"Gagal mengonversi PDF ke gambar: {str(e)}"}
-    finally:
-        # Hapus file sementara
-        if os.path.exists(file_path):
-            os.remove(file_path)
-            print(f"Deleted temporary PDF file: {file_path}")  # Debugging: File PDF sementara dihapus
+    # finally:
+    #     # Hapus file sementara
+    #     if os.path.exists(file_path):
+    #         os.remove(file_path)
+    #         print(f"Deleted temporary PDF file: {file_path}")  # Debugging: File PDF sementara dihapus
 
 @app.post("/convert-word-to-pdf")
 async def convert_word_to_pdf(file: UploadFile = File(...)):
