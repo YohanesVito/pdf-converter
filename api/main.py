@@ -1,4 +1,5 @@
 import uvicorn
+import platform
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -35,7 +36,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+def get_project_temp_dir():
+    if platform.system() == "Windows":
+        return "e:/pdf-converter/temp"
+    else:
+        return "/tmp/pdf-converter"
 
+def get_poppler_path():
+    if platform.system() == "Windows":
+        return r"C:\poppler\poppler-24.08.0\Library\bin"
+    return None
+
+    
 @app.post("/convert-to-pdf")
 async def convert_to_pdf(file: UploadFile = File(...)):
     # Buat file sementara menggunakan tempfile
@@ -97,7 +109,7 @@ async def convert_image_to_pdf(file: UploadFile = File(...)):
 @app.post("/convert-pdf-to-image")
 async def convert_pdf_to_image(file: UploadFile = File(...)):
     # Simpan file sementara di direktori proyek
-    temp_dir = "e:/pdf-converter/temp"
+    temp_dir = get_project_temp_dir()
     os.makedirs(temp_dir, exist_ok=True)
 
     with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf", dir=temp_dir) as temp_file:
@@ -108,11 +120,12 @@ async def convert_pdf_to_image(file: UploadFile = File(...)):
     output_dir = tempfile.mkdtemp(dir=temp_dir)
 
     try:
-        # Tentukan path ke Poppler jika tidak ada di PATH sistem
-        poppler_path = r"C:\poppler\poppler-24.08.0\Library\bin"
-
-        # Logika konversi PDF ke gambar
-        images = convert_from_path(file_path, output_folder=output_dir, poppler_path=poppler_path)
+        system = platform.system()
+        if system == "Windows":
+            poppler_path = get_poppler_path()
+            images = convert_from_path(file_path, output_folder=output_dir, poppler_path=poppler_path)
+        else:
+            images = convert_from_path(file_path, output_folder=output_dir)
 
         # Simpan gambar ke direktori sementara
         image_paths = []
@@ -301,7 +314,7 @@ async def delete_temp_files(file_urls: FileUrls):
         # Direktori sementara global
         global_temp_dir = tempfile.gettempdir()
         # Direktori sementara khusus proyek
-        project_temp_dir = "e:/pdf-converter/temp"
+        project_temp_dir = get_project_temp_dir()
 
         for file_url in file_urls.file_urls:
             # Hapus file dari direktori sementara global

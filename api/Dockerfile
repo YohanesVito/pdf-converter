@@ -17,6 +17,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY . .
 
+# ✅ Buat folder temp setelah semua file disalin
+RUN mkdir -p /app/temp
+
 # Command to run the FastAPI application
 EXPOSE 8001
 
