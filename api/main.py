@@ -115,32 +115,39 @@ async def convert_pdf_to_image(file: UploadFile = File(...)):
     with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf", dir=temp_dir) as temp_file:
         file_path = temp_file.name
         temp_file.write(await file.read())
+        print(f"Uploaded PDF saved at: {file_path}")  # Debugging: Lokasi file PDF yang diunggah
 
     # Tentukan output path untuk gambar
     output_dir = tempfile.mkdtemp(dir=temp_dir)
+    print(f"Output directory for images: {output_dir}")  # Debugging: Lokasi direktori output
 
     try:
         system = platform.system()
         if system == "Windows":
             poppler_path = get_poppler_path()
+            print(f"Using Poppler path: {poppler_path}")  # Debugging: Path Poppler
             images = convert_from_path(file_path, output_folder=output_dir, poppler_path=poppler_path)
         else:
             images = convert_from_path(file_path, output_folder=output_dir)
+
+        print(f"Number of images generated: {len(images)}")  # Debugging: Jumlah gambar yang dihasilkan
 
         # Simpan gambar ke direktori sementara
         image_paths = []
         for i, image in enumerate(images):
             image_path = os.path.join(output_dir, f"page_{i + 1}.jpg")
             image.save(image_path, "JPEG")
+            print(f"Saved image: {image_path}, Size: {os.path.getsize(image_path)} bytes")  # Debugging: Ukuran file gambar
 
             # Salin file ke direktori sementara global
             global_temp_path = os.path.join(tempfile.gettempdir(), f"page_{i + 1}.jpg")
             shutil.copy(image_path, global_temp_path)
+            print(f"Copied image to global temp: {global_temp_path}")  # Debugging: Lokasi salinan file
 
             # Tambahkan path global ke daftar
             image_paths.append(global_temp_path)
 
-        print(f"Generated image paths: {image_paths}")
+        print(f"Generated image paths: {image_paths}")  # Debugging: Daftar path gambar
 
         # Jika hanya satu halaman, kembalikan URL tunggal
         if len(image_paths) == 1:
@@ -149,11 +156,13 @@ async def convert_pdf_to_image(file: UploadFile = File(...)):
         # Jika lebih dari satu halaman, kembalikan daftar URL
         return {"images": [f"{API_BASE_URL}/download/{os.path.basename(path)}" for path in image_paths]}
     except Exception as e:
+        print(f"Error during PDF to image conversion: {str(e)}")  # Debugging: Error yang terjadi
         return {"error": f"Gagal mengonversi PDF ke gambar: {str(e)}"}
     finally:
         # Hapus file sementara
         if os.path.exists(file_path):
             os.remove(file_path)
+            print(f"Deleted temporary PDF file: {file_path}")  # Debugging: File PDF sementara dihapus
 
 @app.post("/convert-word-to-pdf")
 async def convert_word_to_pdf(file: UploadFile = File(...)):
