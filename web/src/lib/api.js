@@ -9,7 +9,7 @@ const apiClient = axios.create({
 });
 
 // Convert Image to PDF
-export const convertImageToPdf = async (file) => {
+export const convertImageToPdf = async (file, onUploadProgress) => {
   const formData = new FormData();
   formData.append("file", file);
 
@@ -17,13 +17,15 @@ export const convertImageToPdf = async (file) => {
     headers: {
       "Content-Type": "multipart/form-data",
     },
+    onUploadProgress,
   });
 
   return response.data;
 };
 
+
 // Convert PDF to Image
-export const convertPdfToImage = async (file) => {
+export const convertPdfToImage = async (file, onUploadProgress) => {
   const formData = new FormData();
   formData.append("file", file);
 
@@ -31,10 +33,12 @@ export const convertPdfToImage = async (file) => {
     headers: {
       "Content-Type": "multipart/form-data",
     },
+    onUploadProgress,
   });
 
   return response.data;
 };
+
 
 // Convert Word to PDF
 export const convertWordToPdf = async (file) => {

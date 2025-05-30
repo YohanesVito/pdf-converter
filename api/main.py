@@ -160,9 +160,9 @@ async def convert_pdf_to_image(file: UploadFile = File(...)):
         print(f"Error during PDF to image conversion: {str(e)}")
         return {"error": f"Gagal mengonversi PDF ke gambar: {str(e)}"}
 
-    finally:
-        if os.path.exists(file_path):
-            os.remove(file_path)
+    # finally:
+    #     if os.path.exists(file_path):
+    #         os.remove(file_path)
 
 @app.post("/convert-word-to-pdf")
 async def convert_word_to_pdf(file: UploadFile = File(...)):
