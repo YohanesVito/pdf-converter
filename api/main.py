@@ -1,5 +1,6 @@
 import uvicorn
 import platform
+import uuid
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -83,25 +84,28 @@ async def convert_to_pdf(file: UploadFile = File(...)):
 # Endpoint: Convert Image to PDF
 @app.post("/convert-image-to-pdf")
 async def convert_image_to_pdf(file: UploadFile = File(...)):
+    temp_dir = get_project_temp_dir()
+    os.makedirs(temp_dir, exist_ok=True)
+
     # Simpan file sementara
-    with tempfile.NamedTemporaryFile(delete=False, suffix="." + file.filename.split(".")[-1]) as temp_file:
+    with tempfile.NamedTemporaryFile(delete=False, suffix="." + file.filename.split(".")[-1], dir=temp_dir) as temp_file:
         file_path = temp_file.name
         temp_file.write(await file.read())
 
-    # Tentukan output path untuk file PDF
-    output_path = tempfile.mktemp(suffix=".pdf")
+    # Gunakan direktori sementara global agar bisa diakses oleh /download
+    output_dir = tempfile.gettempdir()
+    output_filename = f"{uuid.uuid4()}.pdf"  # Nama file unik
+    output_path = os.path.join(output_dir, output_filename)
 
     try:
         # Konversi gambar ke PDF
         with open(output_path, "wb") as f:
             f.write(img2pdf.convert(file_path))
 
-        # Kembalikan file PDF sebagai respons
-        return {"url": f"{API_BASE_URL}/download/{os.path.basename(output_path)}"}
+        return {"url": f"{API_BASE_URL}/download/{output_filename}"}
     except Exception as e:
         return {"error": f"Gagal mengonversi gambar ke PDF: {str(e)}"}
     finally:
-        # Hapus file sementara
         if os.path.exists(file_path):
             os.remove(file_path)
 
