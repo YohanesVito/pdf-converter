@@ -57,7 +57,8 @@ async def convert_to_pdf(file: UploadFile = File(...)):
         temp_file.write(await file.read())
 
     # Tentukan output path untuk file PDF
-    output_path = tempfile.mktemp(suffix=".pdf")
+    output_path = os.path.join(get_project_temp_dir(), f"{uuid.uuid4()}.pdf")
+
 
     try:
         if file.filename.endswith(".docx"):
@@ -93,9 +94,8 @@ async def convert_image_to_pdf(file: UploadFile = File(...)):
         temp_file.write(await file.read())
 
     # Gunakan direktori sementara global agar bisa diakses oleh /download
-    output_dir = tempfile.gettempdir()
     output_filename = f"{uuid.uuid4()}.pdf"  # Nama file unik
-    output_path = os.path.join(output_dir, output_filename)
+    output_path = os.path.join(get_project_temp_dir(), output_filename)
 
     try:
         # Konversi gambar ke PDF
@@ -122,7 +122,8 @@ async def convert_pdf_to_image(file: UploadFile = File(...)):
         print(f"Uploaded PDF saved at: {file_path}")  # Debugging: Lokasi file PDF yang diunggah
 
     # Tentukan output path untuk gambar
-    output_dir = tempfile.mkdtemp(dir=temp_dir)
+    output_dir = os.path.join(get_project_temp_dir(), str(uuid.uuid4()))
+    os.makedirs(output_dir, exist_ok=True)
     print(f"Output directory for images: {output_dir}")  # Debugging: Lokasi direktori output
 
     try:
@@ -142,14 +143,8 @@ async def convert_pdf_to_image(file: UploadFile = File(...)):
             image_path = os.path.join(output_dir, f"page_{i + 1}.jpg")
             image.save(image_path, "JPEG")
             print(f"Saved image: {image_path}, Size: {os.path.getsize(image_path)} bytes")  # Debugging: Ukuran file gambar
-
-            # Salin file ke direktori sementara global
-            global_temp_path = os.path.join(tempfile.gettempdir(), f"page_{i + 1}.jpg")
-            shutil.copy(image_path, global_temp_path)
-            print(f"Copied image to global temp: {global_temp_path}")  # Debugging: Lokasi salinan file
-
-            # Tambahkan path global ke daftar
-            image_paths.append(global_temp_path)
+            # Simpan ke project temp saja
+            image_paths.append(image_path)
 
         print(f"Generated image paths: {image_paths}")  # Debugging: Daftar path gambar
 
@@ -176,7 +171,8 @@ async def convert_word_to_pdf(file: UploadFile = File(...)):
         temp_file.write(await file.read())
 
     # Tentukan output path untuk file PDF
-    output_path = tempfile.mktemp(suffix=".pdf")
+    output_path = os.path.join(get_project_temp_dir(), f"{uuid.uuid4()}.pdf")
+
 
     try:
         # Konversi Word ke PDF
@@ -200,7 +196,8 @@ async def convert_pdf_to_word(file: UploadFile = File(...)):
         temp_file.write(await file.read())
 
     # Tentukan output path untuk file Word
-    output_path = tempfile.mktemp(suffix=".docx")
+    output_path = os.path.join(get_project_temp_dir(), f"{uuid.uuid4()}.docx")
+
 
     try:
         # Logika konversi PDF ke Word (gunakan library seperti pdf2docx)
@@ -220,12 +217,22 @@ async def convert_pdf_to_word(file: UploadFile = File(...)):
 # Endpoint: Download File
 @app.get("/download/{filename}")
 async def download_file(filename: str):
-    temp_dir = get_project_temp_dir()
-    file_path = os.path.join(temp_dir, filename)
-    print(f"Looking for file at: {file_path}")  # Tambahkan log untuk memeriksa lokasi file
-    if os.path.exists(file_path):
-        return FileResponse(file_path, media_type="application/octet-stream", filename=filename)
+    # Cari di direktori proyek
+    project_temp_dir = get_project_temp_dir()
+    project_file_path = os.path.join(project_temp_dir, filename)
+
+    if os.path.exists(project_file_path):
+        return FileResponse(project_file_path, media_type="application/octet-stream", filename=filename)
+
+    # Cari juga di direktori global sementara
+    global_temp_dir = tempfile.gettempdir()
+    global_file_path = os.path.join(global_temp_dir, filename)
+
+    if os.path.exists(global_file_path):
+        return FileResponse(global_file_path, media_type="application/octet-stream", filename=filename)
+
     return {"error": "File not found"}
+
 
 @app.post("/compress-pdf")
 async def compress_pdf(file: UploadFile = File(...)):
@@ -235,7 +242,8 @@ async def compress_pdf(file: UploadFile = File(...)):
         temp_file.write(await file.read())
 
     # Tentukan output path untuk file PDF terkompresi
-    output_path = tempfile.mktemp(suffix=".pdf")
+    output_path = os.path.join(get_project_temp_dir(), f"{uuid.uuid4()}.pdf")
+
 
     try:
         reader = PdfReader(file_path)
@@ -275,7 +283,8 @@ async def merge_pdfs(files: list[UploadFile] = File(...)):
             pdf_files.append(file_path)
 
         # Tentukan output path untuk file PDF gabungan
-        output_path = tempfile.mktemp(suffix=".pdf")
+        output_path = os.path.join(get_project_temp_dir(), f"{uuid.uuid4()}.pdf")
+
         writer = PdfWriter()
 
         for pdf_file in pdf_files:
@@ -307,7 +316,7 @@ class FileUrls(BaseModel):
 async def create_zip(file_urls: FileUrls):
     # Direktori sementara untuk menyimpan file ZIP
     temp_dir = tempfile.gettempdir()
-    zip_path = os.path.join(temp_dir, "pdf_to_image.zip")
+    zip_path = os.path.join(get_project_temp_dir(), f"{uuid.uuid4()}_pdf_to_image.zip")
 
     try:
         # Buat file ZIP
@@ -325,36 +334,22 @@ async def create_zip(file_urls: FileUrls):
 @app.post("/delete-temp-files")
 async def delete_temp_files(file_urls: FileUrls):
     try:
-        # Direktori sementara global
-        global_temp_dir = tempfile.gettempdir()
-        # Direktori sementara khusus proyek
         project_temp_dir = get_project_temp_dir()
 
         for file_url in file_urls.file_urls:
-            # Hapus file dari direktori sementara global
-            global_file_path = os.path.join(global_temp_dir, os.path.basename(file_url))
-            if os.path.exists(global_file_path):
-                print(f"Deleting temporary file from global temp: {global_file_path}")
-                os.remove(global_file_path)
+            filename = os.path.basename(file_url)
+            file_path = os.path.join(project_temp_dir, filename)
 
-            # Cari file di semua subdirektori dalam project_temp_dir
-            found = False
-            for root, dirs, files in os.walk(project_temp_dir):
-                project_file_path = os.path.join(root, os.path.basename(file_url))
-                if os.path.exists(project_file_path):
-                    print(f"Deleting temporary file from project temp: {project_file_path}")
-                    # Hapus folder tempat file berada
-                    shutil.rmtree(root)
-                    print(f"Deleted folder: {root}")
-                    found = True
-                    break
+            if os.path.exists(file_path):
+                print(f"Deleting temporary file: {file_path}")
+                os.remove(file_path)
+            else:
+                print(f"File not found: {file_path}")
 
-            if not found:
-                print(f"File not found in project temp: {os.path.basename(file_url)}")
-
-        return {"message": "Temporary files and folders deleted successfully"}
+        return {"message": "Temporary files deleted successfully"}
     except Exception as e:
-        return {"error": f"Failed to delete temporary files or folders: {str(e)}"}
+        return {"error": f"Failed to delete temporary files: {str(e)}"}
+
     
 
 if __name__ == "__main__":
