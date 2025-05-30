@@ -216,7 +216,8 @@ async def convert_pdf_to_word(file: UploadFile = File(...)):
 # Endpoint: Download File
 @app.get("/download/{filename}")
 async def download_file(filename: str):
-    file_path = os.path.join(tempfile.gettempdir(), filename)
+    temp_dir = get_project_temp_dir()
+    file_path = os.path.join(temp_dir.gettempdir(), filename)
     print(f"Looking for file at: {file_path}")  # Tambahkan log untuk memeriksa lokasi file
     if os.path.exists(file_path):
         return FileResponse(file_path, media_type="application/octet-stream", filename=filename)
