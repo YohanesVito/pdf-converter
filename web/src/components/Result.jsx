@@ -44,12 +44,13 @@ const Result = ({ result, tab }) => {
   const handleDownloadZip = async () => {
     const zip = new JSZip();
 
-    // Tambahkan file ke dalam ZIP
-    result.fileUrl.forEach((url, index) => {
-      zip.file(`page-${index + 1}.jpg`, url.split(",")[1], { base64: true });
-    });
+    // Fetch each image as blob and add to zip
+    for (let i = 0; i < result.fileUrl.length; i++) {
+      const response = await fetch(result.fileUrl[i]);
+      const blob = await response.blob();
+      zip.file(`page-${i + 1}.jpg`, blob);
+    }
 
-    // Buat ZIP dan trigger download
     const content = await zip.generateAsync({ type: "blob" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(content);

@@ -57,7 +57,7 @@ async def convert_to_pdf(file: UploadFile = File(...)):
         temp_file.write(await file.read())
 
     # Tentukan output path untuk file PDF
-    output_path = os.path.join(get_project_temp_dir(), f"{uuid.uuid4()}.pdf")
+    output_path = os.path.join(get_project_temp_dir(), f"tugra-{uuid.uuid4()}.pdf")
 
 
     try:
@@ -94,7 +94,7 @@ async def convert_image_to_pdf(file: UploadFile = File(...)):
         temp_file.write(await file.read())
 
     # Gunakan direktori sementara global agar bisa diakses oleh /download
-    output_filename = f"{uuid.uuid4()}.pdf"  # Nama file unik
+    output_filename = f"tugra-{uuid.uuid4()}.pdf"  # Nama file unik
     output_path = os.path.join(get_project_temp_dir(), output_filename)
 
     try:
@@ -112,56 +112,57 @@ async def convert_image_to_pdf(file: UploadFile = File(...)):
 # Endpoint: Convert PDF to Image
 @app.post("/convert-pdf-to-image")
 async def convert_pdf_to_image(file: UploadFile = File(...)):
-    # Simpan file sementara di direktori proyek
     temp_dir = get_project_temp_dir()
     os.makedirs(temp_dir, exist_ok=True)
 
+    # Simpan file PDF sementara
     with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf", dir=temp_dir) as temp_file:
         file_path = temp_file.name
         temp_file.write(await file.read())
-        print(f"Uploaded PDF saved at: {file_path}")  # Debugging: Lokasi file PDF yang diunggah
+        print(f"Uploaded PDF saved at: {file_path}")
 
-    # Tentukan output path untuk gambar
-    output_dir = os.path.join(get_project_temp_dir(), str(uuid.uuid4()))
+    # Buat direktori output unik dalam temp_dir
+    output_folder_name = str(uuid.uuid4())
+    output_dir = os.path.join(temp_dir, output_folder_name)
     os.makedirs(output_dir, exist_ok=True)
-    print(f"Output directory for images: {output_dir}")  # Debugging: Lokasi direktori output
+    print(f"Output directory for images: {output_dir}")
 
     try:
-        system = platform.system()
-        if system == "Windows":
+        # Konversi PDF ke gambar
+        if platform.system() == "Windows":
             poppler_path = get_poppler_path()
-            print(f"Using Poppler path: {poppler_path}")  # Debugging: Path Poppler
+            print(f"Using Poppler path: {poppler_path}")
             images = convert_from_path(file_path, output_folder=output_dir, poppler_path=poppler_path)
         else:
             images = convert_from_path(file_path, output_folder=output_dir)
 
-        print(f"Number of images generated: {len(images)}")  # Debugging: Jumlah gambar yang dihasilkan
+        print(f"Number of images generated: {len(images)}")
 
-        # Simpan gambar ke direktori sementara
         image_paths = []
         for i, image in enumerate(images):
-            image_path = os.path.join(output_dir, f"page_{i + 1}.jpg")
+            image_filename = f"page_{i + 1}.jpg"
+            image_path = os.path.join(output_dir, image_filename)
             image.save(image_path, "JPEG")
-            print(f"Saved image: {image_path}, Size: {os.path.getsize(image_path)} bytes")  # Debugging: Ukuran file gambar
-            # Simpan ke project temp saja
+            print(f"Saved image: {image_path}")
             image_paths.append(image_path)
 
-        print(f"Generated image paths: {image_paths}")  # Debugging: Daftar path gambar
+        # Bangun URL download
+        download_urls = [f"{API_BASE_URL}/download/{os.path.basename(path)}" for path in image_paths]
 
         # Jika hanya satu halaman, kembalikan URL tunggal
-        if len(image_paths) == 1:
-            return {"url": f"{API_BASE_URL}/download/{os.path.basename(image_paths[0])}"}
+        if len(download_urls) == 1:
+            return {"fileUrl": download_urls[0]}
+        
+        # Jika lebih dari satu, kembalikan array
+        return {"fileUrl": download_urls}
 
-        # Jika lebih dari satu halaman, kembalikan daftar URL
-        return {"images": [f"{API_BASE_URL}/download/{os.path.basename(path)}" for path in image_paths]}
     except Exception as e:
-        print(f"Error during PDF to image conversion: {str(e)}")  # Debugging: Error yang terjadi
+        print(f"Error during PDF to image conversion: {str(e)}")
         return {"error": f"Gagal mengonversi PDF ke gambar: {str(e)}"}
-    # finally:
-    #     # Hapus file sementara
-    #     if os.path.exists(file_path):
-    #         os.remove(file_path)
-    #         print(f"Deleted temporary PDF file: {file_path}")  # Debugging: File PDF sementara dihapus
+
+    finally:
+        if os.path.exists(file_path):
+            os.remove(file_path)
 
 @app.post("/convert-word-to-pdf")
 async def convert_word_to_pdf(file: UploadFile = File(...)):
@@ -171,7 +172,7 @@ async def convert_word_to_pdf(file: UploadFile = File(...)):
         temp_file.write(await file.read())
 
     # Tentukan output path untuk file PDF
-    output_path = os.path.join(get_project_temp_dir(), f"{uuid.uuid4()}.pdf")
+    output_path = os.path.join(get_project_temp_dir(), f"tugra-{uuid.uuid4()}.pdf")
 
 
     try:
@@ -196,7 +197,7 @@ async def convert_pdf_to_word(file: UploadFile = File(...)):
         temp_file.write(await file.read())
 
     # Tentukan output path untuk file Word
-    output_path = os.path.join(get_project_temp_dir(), f"{uuid.uuid4()}.docx")
+    output_path = os.path.join(get_project_temp_dir(), f"tugra-{uuid.uuid4()}.docx")
 
 
     try:
@@ -242,7 +243,7 @@ async def compress_pdf(file: UploadFile = File(...)):
         temp_file.write(await file.read())
 
     # Tentukan output path untuk file PDF terkompresi
-    output_path = os.path.join(get_project_temp_dir(), f"{uuid.uuid4()}.pdf")
+    output_path = os.path.join(get_project_temp_dir(), f"tugra-{uuid.uuid4()}.pdf")
 
 
     try:
@@ -283,7 +284,7 @@ async def merge_pdfs(files: list[UploadFile] = File(...)):
             pdf_files.append(file_path)
 
         # Tentukan output path untuk file PDF gabungan
-        output_path = os.path.join(get_project_temp_dir(), f"{uuid.uuid4()}.pdf")
+        output_path = os.path.join(get_project_temp_dir(), f"tugra-{uuid.uuid4()}.pdf")
 
         writer = PdfWriter()
 
@@ -316,7 +317,7 @@ class FileUrls(BaseModel):
 async def create_zip(file_urls: FileUrls):
     # Direktori sementara untuk menyimpan file ZIP
     temp_dir = tempfile.gettempdir()
-    zip_path = os.path.join(get_project_temp_dir(), f"{uuid.uuid4()}_pdf_to_image.zip")
+    zip_path = os.path.join(get_project_temp_dir(), f"tugra-{uuid.uuid4()}_pdf_to_image.zip")
 
     try:
         # Buat file ZIP
@@ -353,4 +354,4 @@ async def delete_temp_files(file_urls: FileUrls):
     
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+    uvicorn.run(app, host="0.0.0.0", port=8001, limit_max_requests=100)
