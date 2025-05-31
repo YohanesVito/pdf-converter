@@ -28,7 +28,7 @@ const CompressPDF = ({ onStartProcessing }) => {
         <div className="flex min-w-72 flex-col gap-3">
           <p className="text-[#0e141b] tracking-light text-[32px] font-bold leading-tight">Compress PDF</p>
           <p className="text-[#4e7097] text-sm font-normal leading-normal">
-            Reduce the size of your PDF files without losing quality. Upload your files to get started.
+            Reduce the size of your PDF files without losing quality. Upload your files to get started!.
           </p>
         </div>
       </div>
