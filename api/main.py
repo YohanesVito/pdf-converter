@@ -75,7 +75,7 @@ async def convert_to_pdf(file: UploadFile = File(...)):
         # return FileResponse(output_path, media_type="application/pdf", filename="output.pdf")
         return {"url": f"{API_BASE_URL}/download/{os.path.basename(output_path)}"}
     except Exception as e:
-        return {"error": f"Gagal mengonversi file: {str(e)}"}
+        return {"error": f"Gagal mengonversi file : {str(e)}"}
 
     finally:
         # Hapus file sementara setelah selesai
