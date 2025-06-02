@@ -7,7 +7,7 @@ services:
       - ./api:/app
     environment:
       - PYTHONUNBUFFERED=1
-      - API_BASE_URL=http://203.175.11.77:8001
+      - API_BASE_URL=https://api.tech.tugra-dev.my.id/
 
   # web:
   #   build: ./web

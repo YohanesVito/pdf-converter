@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // export const API_URL = "http://localhost:8001"; // Ganti dengan URL API Anda
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://203.175.11.77:8001";
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.tech.tugra-dev.my.id/";
 
 const apiClient = axios.create({
   baseURL: API_URL, // Gunakan variabel lingkungan untuk base URL
