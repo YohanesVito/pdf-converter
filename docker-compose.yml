@@ -7,14 +7,14 @@ services:
       - ./api:/app
     environment:
       - PYTHONUNBUFFERED=1
-      - API_BASE_URL=https://api.tools.tugra-dev.my.id
+      - API_BASE_URL=http://203.175.11.77:8001
 
-  web:
-    build: ./web
-    ports:
-      - "3000:3000"
-    environment:
-      - NEXT_PUBLIC_API_URL=https://api.tools.tugra-dev.my.id
-    depends_on:
-      - api
-    restart: always
+  # web:
+  #   build: ./web
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - NEXT_PUBLIC_API_URL=https://api.tools.tugra-dev.my.id
+  #   depends_on:
+  #     - api
+  #   restart: always

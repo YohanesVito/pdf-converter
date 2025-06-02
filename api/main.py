@@ -29,6 +29,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "https://tools.tugra-dev.my.id",
+        "https://tech.tugra-dev.my.id",
         "http://localhost:3000",
         "http://192.168.100.2:3000"
     ],
