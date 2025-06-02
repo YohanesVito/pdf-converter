@@ -72,7 +72,6 @@ async def convert_to_pdf(file: UploadFile = File(...)):
         else:
             return {"error": "Format file tidak didukung."}
 
-        # Kembalikan file PDF sebagai respons
         # return FileResponse(output_path, media_type="application/pdf", filename="output.pdf")
         return {"url": f"{API_BASE_URL}/download/{os.path.basename(output_path)}"}
     except Exception as e:

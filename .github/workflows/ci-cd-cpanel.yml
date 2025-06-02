@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'web/**'
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -13,10 +14,6 @@ jobs:
     steps:
       - name: 🧾 Checkout Repo
         uses: actions/checkout@v4
-
-      - name: 📂 Change Directory to /web
-        working-directory: ./web
-        run: echo "Switched to web directory"
 
       - name: 🏗️ Setup Node.js
         uses: actions/setup-node@v4
@@ -29,11 +26,12 @@ jobs:
           npm install
           npm run build
 
-      - name: 📂 Sync files
+      - name: 📂 Sync files (Only out folder)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./web/
-          server-dir: public_html/tech.tugra-dev.my.id/root/
+          local-dir: ./web/out/
+          server-dir: public_html/tech.tugra-dev.my.id/
+          

@@ -1,5 +1,5 @@
 module.exports = {
   allowedDevOrigins: ['local-origin.dev', '*.local-origin.dev'],
   productionBrowserSourceMaps: true,
-  // output: 'export',
+  output: 'export',
 }
