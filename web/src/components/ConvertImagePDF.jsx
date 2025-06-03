@@ -49,13 +49,13 @@ const ConvertImagePDF = () => {
           const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
           setUploadProgress(percent);
         });
-        if (response.url) {
-          setResult({ fileUrl: [response.url] });
-        } else if (response.images) {
-          setResult({ fileUrl: response.images });
+        console.log("RESPONSE =>", response);
+        if (response.fileUrl) {
+          setResult({ fileUrl: Array.isArray(response.fileUrl) ? response.fileUrl : [response.fileUrl] });
         } else {
           throw new Error("Invalid response from server.");
         }
+
       }
 
 
@@ -137,8 +137,8 @@ const ConvertImagePDF = () => {
             onClick={handleConvert}
             disabled={selectedFiles.length === 0 || uploading}
             className={`flex items-center justify-center rounded-full h-10 px-4 text-sm font-bold ${selectedFiles.length === 0 || uploading
-                ? "bg-gray-300 cursor-not-allowed text-gray-600"
-                : "bg-[#b2cae5] text-[#101418] cursor-pointer"
+              ? "bg-gray-300 cursor-not-allowed text-gray-600"
+              : "bg-[#b2cae5] text-[#101418] cursor-pointer"
               }`}
           >
             {tab === "imageToPdf" ? "Convert to PDF" : "Convert to Images"}
