@@ -1,7 +1,7 @@
 import uvicorn
 import platform
 import uuid
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, Path
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from PyPDF2 import PdfReader, PdfWriter
@@ -11,7 +11,6 @@ import os
 import img2pdf
 from docx2pdf import convert
 import tempfile
-import shutil
 import zipfile
 from pydantic import BaseModel
 from typing import List
@@ -219,24 +218,15 @@ async def convert_pdf_to_word(file: UploadFile = File(...)):
             os.remove(file_path)
 
 # Endpoint: Download File
-@app.get("/download/{filename}")
-async def download_file(filename: str):
-    # Cari di direktori proyek
+@app.get("/download/{file_path:path}")
+async def download_file(file_path: str = Path(...)):
     project_temp_dir = get_project_temp_dir()
-    project_file_path = os.path.join(project_temp_dir, filename)
+    project_file_path = os.path.join(project_temp_dir, file_path)
 
     if os.path.exists(project_file_path):
-        return FileResponse(project_file_path, media_type="application/octet-stream", filename=filename)
-
-    # Cari juga di direktori global sementara
-    global_temp_dir = tempfile.gettempdir()
-    global_file_path = os.path.join(global_temp_dir, filename)
-
-    if os.path.exists(global_file_path):
-        return FileResponse(global_file_path, media_type="application/octet-stream", filename=filename)
+        return FileResponse(project_file_path, media_type="application/octet-stream", filename=os.path.basename(file_path))
 
     return {"error": "File not found"}
-
 
 @app.post("/compress-pdf")
 async def compress_pdf(file: UploadFile = File(...)):

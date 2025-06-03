@@ -3,9 +3,7 @@
 import { useState } from "react";
 import FileDropZone from "./utils/FileDropZone";
 import { convertImageToPdf, convertPdfToImage } from "@/lib/api";
-import Loading from "./Loading";
 import Result from "./Result";
-import axios from "axios";
 
 const ConvertImagePDF = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
