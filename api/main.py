@@ -146,10 +146,11 @@ async def convert_pdf_to_image(file: UploadFile = File(...)):
             print(f"Saved image: {image_path}")
             image_paths.append(image_path)
 
-        # Bangun URL download
-        relative_path = os.path.relpath(path, temp_dir)
-        download_urls = [f"{API_BASE_URL}/download/{relative_path}" for path in image_paths]
-
+        # Bangun URL download dengan path relatif
+        download_urls = [
+            f"{API_BASE_URL}/download/{os.path.relpath(path, temp_dir)}"
+            for path in image_paths
+        ]
 
         # Jika hanya satu halaman, kembalikan URL tunggal
         if len(download_urls) == 1:
