@@ -7,15 +7,15 @@ services:
       - ./api:/app
     environment:
       - PYTHONUNBUFFERED=1
-      - API_BASE_URL= ${API_BASE_URL}
-      - VALID_API_KEYS= ${VALID_API_KEYS}
+    env_file:
+      - ./api/.env
 
   # web:
   #   build: ./web
   #   ports:
   #     - "3000:3000"
   #   environment:
-  #     - NEXT_PUBLIC_API_URL=https://api.tools.tugra-dev.my.id
+  #     - NEXT_PUBLIC_API_URL=https://api.tech.tugra-dev.my.id
   #   depends_on:
   #     - api
   #   restart: always
