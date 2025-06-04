@@ -91,7 +91,7 @@ async def convert_pdf_to_image(file: UploadFile = File(...)):
         return {"fileUrl": download_urls}
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Gagal mengonversi: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Gagal mengonversi : {str(e)}")
     finally:
         if os.path.exists(file_path):
             os.remove(file_path)
