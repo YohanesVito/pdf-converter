@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8001"; // Gunakan variabel lingkungan untuk base URL
+export const API_URL = process.env.NEXT_PUBLIC_API_URL; // Gunakan variabel lingkungan untuk base URL
 
 const apiClient = axios.create({
   baseURL: API_URL, // Gunakan variabel lingkungan untuk base URL
