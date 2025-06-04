@@ -1,7 +1,6 @@
 import axios from "axios";
 
-// export const API_URL = "http://localhost:8001"; // Ganti dengan URL API Anda
-export const API_URL = "https://api.tech.tugra-dev.my.id/";
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8001"; // Gunakan variabel lingkungan untuk base URL
 
 const apiClient = axios.create({
   baseURL: API_URL, // Gunakan variabel lingkungan untuk base URL
@@ -16,6 +15,7 @@ export const convertImageToPdf = async (file, onUploadProgress) => {
   const response = await apiClient.post("/convert-image-to-pdf", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
+      "x-api-key": process.env.NEXT_PUBLIC_API_KEY
     },
     onUploadProgress,
   });
